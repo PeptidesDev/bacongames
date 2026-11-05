@@ -220,11 +220,11 @@
 <body>
 
 <nav>
-  <a href="https://binaro26.github.io/bacongames/">Home</a>
-  <a href="https://binaro26.github.io/bacongames/games" class="active">Games</a>
-  <a href="https://binaro26.github.io/bacongames/info">Information</a>
-  <a href="https://binaro26.github.io/bacongames/settings">Settings</a>
-     <a href="https://binaro26.github.io/bacongames/utilities" class="btn">Utilities</a>
+  <a href="../">Home</a>
+  <a href="../games/" class="active">Games</a>
+  <a href="../info/">Information</a>
+  <a href="../settings/">Settings</a>
+     <a href="../utilities/" class="btn">Utilities</a>
 </nav>
 
 <div class="content">
@@ -242,10 +242,16 @@
 <footer>Created by Pausuu &amp; Binaro26</footer>
 
 <script>
-  const OWNER = 'BinarO26';
-  const REPO = 'bacongames';
+  // Read the list from whichever fork is serving this page (e.g. <owner>.github.io/<repo>/),
+  // falling back to this fork when opened elsewhere (localhost, custom domain, file://).
+  const DEFAULT_OWNER = 'PeptidesDev';
+  const DEFAULT_REPO = 'bacongames';
+  const pagesMatch = /^([a-z0-9-]+)\.github\.io$/i.exec(location.hostname);
+  const pagesRepo = location.pathname.split('/').filter(Boolean)[0];
+  const OWNER = pagesMatch ? pagesMatch[1] : DEFAULT_OWNER;
+  const REPO = pagesMatch && pagesRepo && pagesRepo !== 'games' ? pagesRepo : DEFAULT_REPO;
   const GAMES_PATH = 'games';
-  const CACHE_KEY = 'bacongames_list_cache';
+  const CACHE_KEY = 'bacongames_list_cache_v2'; // v2: list now comes from the serving fork
   const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
   // Square cover art hosted by the game portals themselves
@@ -253,6 +259,49 @@
   const COVERS = {
  // i need to fix this
   };
+
+  // Baked-in list of game folders, shown instantly and used whenever the GitHub API is
+  // unavailable (it allows only 60 unauthenticated requests per hour per IP).
+  // Keep in sync with the folders in games/ when adding or removing a game.
+  const GAMES = [
+    "10 Bullets", "10 Minutes Till Dawn", "12 Mini Battles", "1v1 LOL", "2 Doom", "2048", "2048 Cupcakes",
+    "3D Flight Simulator", "8 Ball Pool", "Agar io", "Age of War", "Age of War 2", "Angry Birds",
+    "Angry Birds Showdown", "Angry Birds Space", "Appel", "Awsome Tanks", "Awsome Tanks 2",
+    "Backrooms Escape", "Bad Piggies", "Baseball Bros", "Basket Bros", "Basketball Legends",
+    "Basketball Starz", "Basketrandom", "Bendy and The Ink Machine", "Black Jack", "Block Blast",
+    "Blocky Snake", "Bloons TD 1", "Bloons TD 2", "Bloons TD 3", "Bloons TD 4", "Bloons TD 5", "Bloxorz",
+    "Blumgi Racers", "Bow Masters", "Boxing Random", "Brawl Stars", "Candy Crush", "Celeste", "Choppy Orc",
+    "Cookie Clicker", "Crazy Cattle 3D", "Crossy Road", "Cup Head", "Cut The Rope", "Death Run 3D",
+    "Deltarune", "Doodle Jump", "Doom", "Doom 2", "Drift Boss", "Drive Mad", "Duck Life", "Duck Life 2",
+    "Duck Life 3", "Duck Life 4", "Duck Life 5", "Dune", "Eggy Car", "Elastic Face", "Escape Road",
+    "Escape Road 2", "Fears To Fathom", "Fire Boy and Water Girl", "Fire Boy and Water Girl 2",
+    "Fire Boy and Water Girl 3", "Five Nights at Freddy's", "Five Nights at Freddy's 2",
+    "Five Nights at Freddy's 3", "Five Nights at Freddy's 4", "Five Nights at Freddy's Pizza Simulator",
+    "Five Nights at Freddy's Sister Location", "Five Nights at Freddy's UCN",
+    "Five Nights at Freddy's World", "Five Nights at Winston's", "Flappy Bird", "Flood Runner 2",
+    "Flood Runner 3", "Flood Runner 4", "Football Bros", "Football Legends", "Fruit Ninja", "GBA Emulator",
+    "Geometry Dash", "Getaway Shoot out", "Getting Over It", "Granny", "Granny 2", "Gun Knight",
+    "Gun Mayhem", "Half Life", "Happy Wheels", "Heist", "Helix Jump", "Henry Stickmin Breaking the Bank",
+    "Henry Stickmin Escaping the Prison", "Hill Climb Racing", "Hole io", "Hollow Knight",
+    "Hollow Knight, Silk Song", "Hotline Miami", "Idle Miner Tycoon", "Jetpack Joyride", "Just Fall LOL",
+    "Learn To Fly", "Learn To Fly 2", "Learn To Fly 3", "Legend of Zelda Majora's Mask",
+    "Legend of Zelda Ocarina of Time", "Level Devil", "Little Alchemy 2", "Madalin Stunt Cars 2",
+    "Madalin Stunt Cars 3", "Melon Playground", "Merge Round Racers", "Mine Sweeper", "Minecraft",
+    "Monkey Mart", "Moto X3M", "Moto X3M 2", "Moto X3M 3", "Moto X3M Pool Party", "Moto X3M Spooky Land",
+    "Moto X3M Winter", "Moto X3M Winter Land", "Only Up", "OvO", "OvO 2", "OvO 3", "Pac Man",
+    "Papa's Bakeria", "Papa's Burgeria", "Papa's Cheeseria", "Papa's Cupcakeria", "Papa's Donuteria",
+    "Papa's Freezeria", "Papa's Hot Doggeria", "Papa's Pancakeria", "Papa's Pastaria", "Papa's Pizzeria",
+    "Papa's Scooperia", "Papa's Sushiria", "Papa's Tacoria", "Papa's Wingeria", "Paper io 2", "Parking Fury",
+    "Parking Fury 2", "Parking Fury 3", "People Playground", "Pixel Shooter", "Plants vs Zombies",
+    "Poly Track", "Pou", "Repo", "Retro Bowl", "Retro Bowl College", "Rocket Soccer", "Rolling Sky",
+    "Rooftop Snipers", "Rooftop Snipers 2", "Run", "Run 2", "Run 3", "Sandtris", "Secret", "Slope",
+    "Slope 2", "Slope 3", "Snake io", "Snow Rider 3D", "Snowball io", "Soccer Bros", "Soccer Random",
+    "Speed Stars", "Stack", "Steal A Brainrot", "Stickman Climb", "Stickman Hook", "Stumble Guys",
+    "Subway Surfers", "Super Hot", "Super Mario 64", "Temple Run 2", "Terraria", "Tetris",
+    "The Impossible Quiz", "The Oregon Trail", "This is The Only Level", "Time Shooter 2",
+    "Time Shooter 3 S.W.A.T", "Tiny Fishing", "Tomb of The Mask", "Tunnel Rush 2", "Vex 7", "Volley Random",
+    "We Become What We Behold", "Wordle", "World Guessr", "World's Hardest Game 3", "Wrestle Bros"
+  ];
 
   let games = [];       // [{ name, lower }]
   let searchDebounce = null;
@@ -375,8 +424,13 @@
       }
 
       const items = await res.json();
+      const list = toGameList(items);
 
-      return toGameList(items);
+      if (list.length === 0) {
+        throw new Error('GitHub API returned no game folders');
+      }
+
+      return list;
     } finally {
       clearTimeout(timeout);
     }
@@ -391,7 +445,7 @@
     // 1. Show something instantly: cached list, otherwise the baked-in list
     const cached = readCache();
 
-    setGames(cached || Object.keys(COVERS).sort((a, b) => a.localeCompare(b)));
+    setGames(cached || GAMES.slice().sort((a, b) => a.localeCompare(b)));
 
     // 2. Always refresh in the background
     try {

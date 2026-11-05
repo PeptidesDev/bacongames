@@ -13,13 +13,15 @@ cd <repo root> && python3 -m http.server 8123
 # open http://localhost:8123/games/
 ```
 
-Nav links are absolute to `https://binaro26.github.io/bacongames/`, so clicking nav leaves
-localhost — expected, not a bug. Use the URL bar to get back to `localhost:8123/games/`.
+Nav links are relative (`./games/`, `../info/`, ...), so they work on localhost, on any fork's
+GitHub Pages project site, and on a custom domain.
 
 ## games/index.html behaviour worth knowing
-- The card list paints immediately from a hardcoded `COVERS` map (game folder name -> external
-  cover URL), then refreshes from the GitHub contents API and caches the result in
-  `localStorage['bacongames_list_cache']` for 30 min. Clear that key for a clean run.
+- The card list paints immediately from the baked-in `GAMES` array (cover art comes from the
+  optional `COVERS` map), then refreshes from the GitHub contents API of the repo serving the
+  page (`<owner>.github.io/<repo>/`, default PeptidesDev/bacongames) and caches the result in
+  `localStorage['bacongames_list_cache_v2']` for 30 min. Clear that key for a clean run.
+  Keep `GAMES` in sync when adding or removing a game folder.
 - The GitHub API call is often rate-limited (HTTP 403) from CI/agent IPs; the page logs
   `Failed to refresh games list:` and keeps the baked-in list. This console error is expected
   and not a regression.
