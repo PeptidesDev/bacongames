@@ -359,7 +359,7 @@ window.Audio.prototype = OriginalAudio.prototype;
 
 
 function rewriteURL(original) {
-  var trimmed = original.split("/").pop().replaceAll("%20", " ");
+  var trimmed = original.split("/").pop();
   //console.log(trimmed)
   if (trimmed.includes("?")) trimmed = trimmed.split("?")[0]
   return blobUrlss[trimmed] || original;
